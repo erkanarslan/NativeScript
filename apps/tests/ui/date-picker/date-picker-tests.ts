@@ -92,6 +92,15 @@ export function test_WhenCreated_DayIsUndefined() {
     });
 }
 
+export function test_WhenCreated_DateIsUndefined() {
+    helper.buildUIAndRunTest(_createDatePicker(), function (views: Array<viewModule.View>) {
+        var datePicker = <datePickerModule.DatePicker>views[0];
+        var actualValue = datePicker.date;
+        var expectedValue = undefined;
+        TKUnit.assert(actualValue === expectedValue, "Actual: " + actualValue + "; Expected: " + expectedValue);
+    });
+}
+
 export function testYearFromLocalToNative() {
     helper.buildUIAndRunTest(_createDatePicker(), function (views: Array<viewModule.View>) {
         var datePicker = <datePickerModule.DatePicker>views[0];
@@ -119,6 +128,42 @@ export function testDayFromLocalToNative() {
         datePicker.day = expectedValue;
         var actualValue = datePickerTestsNative.getNativeDay(datePicker);
         TKUnit.assert(actualValue === expectedValue, "Actual: " + actualValue + "; Expected: " + expectedValue);
+    });
+}
+
+export function test_DateIsSetCorrectlyWhenDayIsSet() {
+    helper.buildUIAndRunTest(_createDatePicker(), function (views: Array<viewModule.View>) {
+        var datePicker = <datePickerModule.DatePicker>views[0];
+        var expectedValue = 19;
+        datePicker.day = expectedValue;
+        let expectedDate = new Date(0, 0, 19);
+        TKUnit.assertEqual(datePicker.date.getDate(), expectedDate.getDate(), "Getting Day from date property failed.");
+        TKUnit.assertEqual(datePicker.date.getMonth(), expectedDate.getMonth(), "Getting Month from date property failed.");
+        TKUnit.assertEqual(datePicker.date.getFullYear(), expectedDate.getFullYear(), "Getting Year from date property failed.");
+    });
+}
+
+export function test_DateIsSetCorrectlyWhenMonthIsSet() {
+    helper.buildUIAndRunTest(_createDatePicker(), function (views: Array<viewModule.View>) {
+        var datePicker = <datePickerModule.DatePicker>views[0];
+        var expectedValue = 5;
+        datePicker.month = expectedValue;
+        let expectedDate = new Date(0, expectedValue - 1, 1);
+        TKUnit.assertEqual(datePicker.date.getDate(), expectedDate.getDate(), "Getting Day from date property failed.");
+        TKUnit.assertEqual(datePicker.date.getMonth(), expectedDate.getMonth(), "Getting Month from date property failed.");
+        TKUnit.assertEqual(datePicker.date.getFullYear(), expectedDate.getFullYear(), "Getting Year from date property failed.");
+    });
+}
+
+export function test_DateIsSetCorrectlyWhenYearIsSet() {
+    helper.buildUIAndRunTest(_createDatePicker(), function (views: Array<viewModule.View>) {
+        var datePicker = <datePickerModule.DatePicker>views[0];
+        var expectedValue = 1980;
+        datePicker.year = expectedValue;
+        let expectedDate = new Date(1980, 0, 1);
+        TKUnit.assertEqual(datePicker.date.getDate(), expectedDate.getDate(), "Getting Day from date property failed.");
+        TKUnit.assertEqual(datePicker.date.getMonth(), expectedDate.getMonth(), "Getting Month from date property failed.");
+        TKUnit.assertEqual(datePicker.date.getFullYear(), expectedDate.getFullYear(), "Getting Year from date property failed.");
     });
 }
 
@@ -157,7 +202,7 @@ export function testMonthFromNativeToLocal() {
         var datePicker = <datePickerModule.DatePicker>views[0];
 
         //Use July as it has 31 days
-        var expectedValue = 7; 
+        var expectedValue = 7;
         datePickerTestsNative.setNativeMonth(datePicker, expectedValue);
         var actualValue = datePicker.month;
         TKUnit.assert(actualValue === expectedValue, "Actual: " + actualValue + "; Expected: " + expectedValue);
@@ -183,6 +228,59 @@ export function testDayFromNativeToLocal() {
         datePickerTestsNative.setNativeDay(datePicker, expectedValue);
         var actualValue = datePicker.day;
         TKUnit.assert(actualValue === expectedValue, "Actual: " + actualValue + "; Expected: " + expectedValue);
+    });
+}
+
+export function test_DateFromNativeToLocalWithDay() {
+    helper.buildUIAndRunTest(_createDatePicker(), function (views: Array<viewModule.View>) {
+        var datePicker = <datePickerModule.DatePicker>views[0];
+        var expectedValue = 20;
+        datePickerTestsNative.setNativeDay(datePicker, expectedValue);
+        let expectedDate = new Date(0, 0, expectedValue);
+        TKUnit.assertEqual(datePicker.date.getDate(), expectedDate.getDate(), "Getting Day from date property failed.");
+        TKUnit.assertEqual(datePicker.date.getMonth(), expectedDate.getMonth(), "Getting Month from date property failed.");
+        TKUnit.assertEqual(datePicker.date.getFullYear(), expectedDate.getFullYear(), "Getting Year from date property failed.");
+    });
+}
+
+export function test_DateFromNativeToLocalWithMonth() {
+    helper.buildUIAndRunTest(_createDatePicker(), function (views: Array<viewModule.View>) {
+        var datePicker = <datePickerModule.DatePicker>views[0];
+
+        //Use July as it has 31 days
+        var expectedValue = 7;
+        datePickerTestsNative.setNativeMonth(datePicker, expectedValue);
+        let expectedDate = new Date(0, expectedValue - 1, 1);
+        TKUnit.assertEqual(datePicker.date.getDate(), expectedDate.getDate(), "Getting Day from date property failed.");
+        TKUnit.assertEqual(datePicker.date.getMonth(), expectedDate.getMonth(), "Getting Month from date property failed.");
+        TKUnit.assertEqual(datePicker.date.getFullYear(), expectedDate.getFullYear(), "Getting Year from date property failed.");
+    });
+}
+
+export function test_DateFromNativeToLocalWithYear() {
+    helper.buildUIAndRunTest(_createDatePicker(), function (views: Array<viewModule.View>) {
+        var datePicker = <datePickerModule.DatePicker>views[0];
+        var expectedValue = 1981;
+        datePickerTestsNative.setNativeYear(datePicker, expectedValue);
+        let expectedDate = new Date(expectedValue, 0, 1);
+        TKUnit.assertEqual(datePicker.date.getDate(), expectedDate.getDate(), "Getting Day from date property failed.");
+        TKUnit.assertEqual(datePicker.date.getMonth(), expectedDate.getMonth(), "Getting Month from date property failed.");
+        TKUnit.assertEqual(datePicker.date.getFullYear(), expectedDate.getFullYear(), "Getting Year from date property failed.");
+    });
+}
+
+export function test_DateFromNativeToLocalWithAll() {
+    var testYear = 2000;
+    var testMonth = 3;
+    var testDay = 24;
+
+    helper.buildUIAndRunTest(_createDatePicker(), function (views: Array<viewModule.View>) {
+        var datePicker = <datePickerModule.DatePicker>views[0];
+        datePickerTestsNative.setNativeDate(datePicker, testYear, testMonth, testDay);
+        let expectedDate = new Date(testYear, testMonth - 1, testDay);
+        TKUnit.assertEqual(datePicker.date.getDate(), expectedDate.getDate(), "Getting Day from date property failed.");
+        TKUnit.assertEqual(datePicker.date.getMonth(), expectedDate.getMonth(), "Getting Month from date property failed.");
+        TKUnit.assertEqual(datePicker.date.getFullYear(), expectedDate.getFullYear(), "Getting Year from date property failed.");
     });
 }
 
@@ -213,7 +311,7 @@ export function testSetYearMonthDay_AfterLoaded() {
         var datePicker = <datePickerModule.DatePicker>views[0];
         datePicker.year = testYear;
         datePicker.month = testMonth;
-        datePicker.day = testDay;        
+        datePicker.day = testDay;
 
         assertDate(datePicker, testYear, testMonth, testDay);
     });
